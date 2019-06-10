@@ -1,10 +1,6 @@
 class OrderItemsController < ApplicationController
-  before_action :set_order_item, only: %i[edit update destroy]
-  before_action :load_order, only: %i[create]
-
-  # def index
-  #   @products = Product.all
-  # end
+  before_action :set_order_item, only: %i[edit destroy]
+  before_action :load_order, only: %i[create update]
 
   # GET /order_items/1/edit
   def edit; end
@@ -28,9 +24,14 @@ class OrderItemsController < ApplicationController
   # PATCH/PUT /order_items/1
   # PATCH/PUT /order_items/1.json
   def update
+    order_item = @order.order_items.find_by(id: params[:id])
     respond_to do |format|
-      if @order_item.update(order_item_params)
-        format.html { redirect_to @order_item, notice: 'Order item was successfully updated.' }
+      if params[:order_item][:quantity].to_i.zero?
+        order_item.destroy
+        format.html { redirect_to @order, notice: 'Order item was successfully removed.' }
+        format.json { render :show, status: :ok, location: @order_item }
+      elsif @order_item.update(order_item_params)
+        format.html { redirect_to @order, notice: 'Order item was successfully updated.' }
         format.json { render :show, status: :ok, location: @order_item }
       else
         format.html { render :edit }
