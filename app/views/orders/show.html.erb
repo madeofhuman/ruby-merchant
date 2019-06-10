@@ -21,7 +21,7 @@
   </tr>
   <% @order.order_items.each do |item| %>
     <tr>
-      <td></td>
+      <td><%= @order.user.name if @order.user %></td>
       <td><%= item.product.title %></td>
       <td><%= link_to item.quantity, edit_order_item_path(item) %></td>
       <td><%= print_stock(item.product.stock, item.quantity) %></td>
